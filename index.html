@@ -148,19 +148,19 @@
         },
       };
 
+        
       async function check_url(url) {
-        let controller = new AbortController();
-        let timeout = setTimeout(() => controller.abort(), 500);
+          let controller = new AbortController();
+          let timeout = setTimeout(() => controller.abort(), 500);
 
-        try {
-          await fetch(url, {signal: controller.signal});
-          return true;
-        }
-        catch (error) {
-          let error_msg = error+"";
-          return error_msg.includes("AbortError");
-        }
+          try {
+            let response = await fetch(url, { signal: controller.signal });
+            return response.ok; // Check both accessibility and successful response
+            } catch (error) {
+              return error.name === "AbortError"; // Only return true for AbortError
+          }
       }
+
       
       async function detect_extensions() {
         let detected = [];
@@ -200,6 +200,8 @@
         }
       }
 
+      
+        
       function button_handler(extension) {
         let cancel = !confirm("After hitting OK, there will be a 5 second delay until the extension starts being frozen. Switch to another tab immediately to prevent the entire device from locking up.");
         if (cancel) return;
